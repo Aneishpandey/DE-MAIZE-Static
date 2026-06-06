@@ -4,6 +4,7 @@ pipeline {
     environment {
         IMAGE_NAME = 'de-maize-static'
         CONTAINER_NAME = 'de-maize-app'
+        SONAR_PROJECT_KEY = 'de-maize-static'
     }
 
     stages {
@@ -26,6 +27,26 @@ pipeline {
             steps {
                 echo 'Running smoke test...'
                 sh 'docker run --rm ${IMAGE_NAME} node -e "console.log(\'server.js exists:\', require(\'fs\').existsSync(\'server.js\'))"'
+            }
+        }
+
+        stage('SonarQube Analysis') {
+            steps {
+                echo 'Running SonarQube code analysis...'
+                withSonarQubeEnv('sonarqube') {
+                    sh '''
+                        docker run --rm \
+                        --network host \
+                        -e SONAR_HOST_URL=http://localhost:9000 \
+                        -e SONAR_TOKEN=$SONAR_AUTH_TOKEN \
+                        -v $(pwd):/usr/src \
+                        sonarsource/sonar-scanner-cli \
+                        -Dsonar.projectKey=${SONAR_PROJECT_KEY} \
+                        -Dsonar.projectName="DE-MAIZE Static" \
+                        -Dsonar.sources=. \
+                        -Dsonar.exclusions=**/.next/**,**/node_modules/**
+                    '''
+                }
             }
         }
 
