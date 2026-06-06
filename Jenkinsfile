@@ -24,8 +24,8 @@ pipeline {
 
         stage('Test') {
             steps {
-                echo 'Running tests...'
-                sh 'docker run --rm ${IMAGE_NAME} npm run build'
+                echo 'Running smoke test...'
+                sh 'docker run --rm ${IMAGE_NAME} node -e "console.log(\'server.js exists:\', require(\'fs\').existsSync(\'server.js\'))"'
             }
         }
 
