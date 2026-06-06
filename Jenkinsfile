@@ -31,24 +31,24 @@ pipeline {
         }
 
         stage('SonarQube Analysis') {
-            steps {
-                echo 'Running SonarQube code analysis...'
-                withSonarQubeEnv('sonarqube') {
-                    sh '''
-                        docker run --rm \
-                        --network host \
-                        -e SONAR_HOST_URL=http://localhost:9000 \
-                        -e SONAR_TOKEN=$SONAR_AUTH_TOKEN \
-                        -v $(pwd):/usr/src \
-                        sonarsource/sonar-scanner-cli \
-                        -Dsonar.projectKey=${SONAR_PROJECT_KEY} \
-                        -Dsonar.projectName="DE-MAIZE Static" \
-                        -Dsonar.sources=. \
-                        -Dsonar.exclusions=**/.next/**,**/node_modules/**
-                    '''
-                }
-            }
+    steps {
+        echo 'Running SonarQube code analysis...'
+        withSonarQubeEnv('sonarqube') {
+            sh """
+                docker run --rm \
+                --network host \
+                -e SONAR_HOST_URL=http://localhost:9000 \
+                -e SONAR_TOKEN=\$SONAR_AUTH_TOKEN \
+                -v "\$(pwd):/usr/src" \
+                sonarsource/sonar-scanner-cli \
+                -Dsonar.projectKey=${SONAR_PROJECT_KEY} \
+                -Dsonar.projectName="DE-MAIZE Static" \
+                -Dsonar.sources=. \
+                -Dsonar.exclusions=**/.next/**,**/node_modules/**
+            """
         }
+    }
+}
 
         stage('Deploy') {
             steps {
