@@ -1,6 +1,7 @@
 'use client'
 
 import { motion } from 'framer-motion'
+import type { SectionHeader } from '@/lib/types'
 
 function LinkedinIcon({ className }: { className?: string }) {
   return (
@@ -18,38 +19,23 @@ function TwitterIcon({ className }: { className?: string }) {
   )
 }
 
-const team = [
-  {
-    name: 'Sarah Johnson',
-    role: 'CEO & Founder',
-    bio: 'Visionary leader with 15+ years in digital transformation',
-    gradient: 'from-primary/60 to-accent/40',
-  },
-  {
-    name: 'Michael Chen',
-    role: 'CTO',
-    bio: 'Full-stack expert driving technical innovation',
-    gradient: 'from-accent/60 to-primary/40',
-  },
-  {
-    name: 'Emily Rodriguez',
-    role: 'Creative Director',
-    bio: 'Award-winning designer crafting memorable experiences',
-    gradient: 'from-primary/40 to-accent/60',
-  },
-  {
-    name: 'David Kim',
-    role: 'Head of Marketing',
-    bio: 'Strategic marketer with proven growth track record',
-    gradient: 'from-accent/40 to-primary/60',
-  },
-]
+interface TeamSectionProps {
+  team: Array<{
+    id: string
+    name: string
+    role: string
+    bio: string
+    gradient: string
+    linkedinUrl: string | null
+    twitterUrl: string | null
+  }>
+  section?: SectionHeader
+}
 
-export function TeamSection() {
+export function TeamSection({ team, section }: TeamSectionProps) {
   return (
     <section id="team" className="relative py-20 lg:py-28">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        {/* Section Header */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -57,55 +43,50 @@ export function TeamSection() {
           transition={{ duration: 0.6 }}
           className="text-center max-w-3xl mx-auto mb-16"
         >
-          <span className="inline-flex items-center rounded-full border border-accent/40 bg-accent/10 px-4 py-1.5 mb-4">
-            <span className="text-sm font-medium text-accent tracking-wide">OUR TEAM</span>
-          </span>
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-foreground text-balance">
-            Meet the Experts
-          </h2>
-          <p className="mt-4 text-lg text-muted-foreground">
-            Our talented team of professionals is dedicated to delivering exceptional results.
-          </p>
+          {section?.badge && (
+            <span className="inline-flex items-center rounded-full border border-accent/40 bg-accent/10 px-4 py-1.5 mb-4">
+              <span className="text-sm font-medium text-accent tracking-wide">{section.badge}</span>
+            </span>
+          )}
+          {section?.heading && (
+            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-foreground text-balance">
+              {section.heading}
+            </h2>
+          )}
+          {section?.description && (
+            <p className="mt-4 text-lg text-muted-foreground">{section.description}</p>
+          )}
         </motion.div>
 
-        {/* Team Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8">
           {team.map((member, index) => (
             <motion.div
-              key={index}
+              key={member.id}
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.6, delay: index * 0.1 }}
               className="group relative text-center"
             >
-              {/* Avatar */}
-              <div className="relative mx-auto w-40 h-40 sm:w-48 sm:h-48 rounded-full overflow-hidden mb-5">
-                <div className={`w-full h-full bg-gradient-to-br ${member.gradient}`} />
-                <div className="absolute inset-0 flex items-center justify-center text-4xl font-bold text-foreground/30">
-                  {member.name.split(' ').map(n => n[0]).join('')}
-                </div>
+              <div className={`w-32 h-32 mx-auto rounded-2xl bg-gradient-to-br ${member.gradient} flex items-center justify-center mb-5`}>
+                <span className="text-3xl font-bold text-foreground/80">
+                  {member.name.split(' ').map((n) => n[0]).join('')}
+                </span>
               </div>
-
-              {/* Info */}
-              <h3 className="text-xl font-bold text-foreground">{member.name}</h3>
-              <p className="text-primary font-medium mt-1">{member.role}</p>
+              <h3 className="text-lg font-bold text-foreground">{member.name}</h3>
+              <p className="text-sm text-primary font-medium mt-1">{member.role}</p>
               <p className="text-sm text-muted-foreground mt-2">{member.bio}</p>
-
-              {/* Social Links */}
-              <div className="flex items-center justify-center gap-3 mt-4">
-                <a
-                  href="#"
-                  className="w-9 h-9 rounded-full bg-card border border-border flex items-center justify-center hover:border-primary hover:bg-primary/10 transition-colors"
-                >
-                  <LinkedinIcon className="w-4 h-4 text-muted-foreground" />
-                </a>
-                <a
-                  href="#"
-                  className="w-9 h-9 rounded-full bg-card border border-border flex items-center justify-center hover:border-primary hover:bg-primary/10 transition-colors"
-                >
-                  <TwitterIcon className="w-4 h-4 text-muted-foreground" />
-                </a>
+              <div className="flex items-center justify-center gap-3 mt-4 opacity-0 group-hover:opacity-100 transition-opacity">
+                {member.linkedinUrl && (
+                  <a href={member.linkedinUrl} className="w-8 h-8 rounded-full bg-secondary flex items-center justify-center hover:bg-primary/20">
+                    <LinkedinIcon className="w-4 h-4 text-muted-foreground" />
+                  </a>
+                )}
+                {member.twitterUrl && (
+                  <a href={member.twitterUrl} className="w-8 h-8 rounded-full bg-secondary flex items-center justify-center hover:bg-primary/20">
+                    <TwitterIcon className="w-4 h-4 text-muted-foreground" />
+                  </a>
+                )}
               </div>
             </motion.div>
           ))}

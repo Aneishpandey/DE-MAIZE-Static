@@ -53,19 +53,17 @@ function StatItem({ value, label, suffix = '' }: StatItemProps) {
   )
 }
 
-const stats = [
-  { value: 59, label: 'Projects Completed' },
-  { value: 28, label: 'Client Satisfaction' },
-  { value: 12, label: 'Industry Awards' },
-]
+interface StatsSectionProps {
+  stats: Array<{ id: string; value: number; label: string; suffix: string }>
+}
 
-export function StatsSection() {
+export function StatsSection({ stats }: StatsSectionProps) {
   return (
     <section className="relative py-20 lg:py-28">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-12 lg:gap-16">
-          {stats.map((stat, index) => (
-            <StatItem key={index} value={stat.value} label={stat.label} />
+          {stats.map((stat) => (
+            <StatItem key={stat.id} value={stat.value} label={stat.label} suffix={stat.suffix} />
           ))}
         </div>
       </div>

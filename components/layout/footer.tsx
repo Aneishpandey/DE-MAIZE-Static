@@ -32,88 +32,65 @@ function GithubIcon({ className }: { className?: string }) {
   )
 }
 
-const footerLinks = {
-  services: [
-    { label: 'Web Development', href: '/services/web-development' },
-    { label: 'Mobile Apps', href: '/services/mobile-apps' },
-    { label: 'Digital Marketing', href: '/services/digital-marketing' },
-    { label: 'UI/UX Design', href: '/services/ui-ux-design' },
-  ],
-  company: [
-    { label: 'About Us', href: '#' },
-    { label: 'Our Team', href: '#team' },
-    { label: 'Careers', href: '#' },
-    { label: 'Contact', href: '#contact' },
-  ],
-  resources: [
-    { label: 'Blog', href: '#blog' },
-    { label: 'Case Studies', href: '#portfolio' },
-    { label: 'Privacy Policy', href: '#' },
-    { label: 'Terms of Service', href: '#' },
-  ],
+const socialIconMap: Record<string, React.ComponentType<{ className?: string }>> = {
+  Twitter: TwitterIcon,
+  LinkedIn: LinkedinIcon,
+  Instagram: InstagramIcon,
+  GitHub: GithubIcon,
 }
 
-const socialLinks = [
-  { icon: TwitterIcon, href: '#', label: 'Twitter' },
-  { icon: LinkedinIcon, href: '#', label: 'LinkedIn' },
-  { icon: InstagramIcon, href: '#', label: 'Instagram' },
-  { icon: GithubIcon, href: '#', label: 'GitHub' },
-]
+interface FooterProps {
+  brandName: string
+  brandTagline: string
+  brandDescription: string
+  footerLinks: {
+    services: Array<{ label: string; href: string }>
+    company: Array<{ label: string; href: string }>
+    resources: Array<{ label: string; href: string }>
+  }
+  socialLinks: Array<{ label: string; href: string; platform: string }>
+}
 
-export function Footer() {
+export function Footer({ brandName, brandTagline, brandDescription, footerLinks, socialLinks }: FooterProps) {
   return (
     <footer className="relative bg-card border-t border-border">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-12 lg:py-16">
         <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-8 lg:gap-12">
-          {/* Brand */}
           <div className="col-span-2 lg:col-span-1">
             <Link href="/" className="flex items-center gap-3">
               <div className="flex h-10 w-10 items-center justify-center rounded-lg border border-primary/30 bg-secondary">
-                <svg
-                  viewBox="0 0 24 24"
-                  className="h-5 w-5 text-primary"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                >
+                <svg viewBox="0 0 24 24" className="h-5 w-5 text-primary" fill="none" stroke="currentColor" strokeWidth="2">
                   <circle cx="12" cy="12" r="3" />
                   <path d="M12 2v4M12 18v4M2 12h4M18 12h4" />
                 </svg>
               </div>
-              <span className="text-lg font-bold text-foreground">DE-MAIZE</span>
+              <span className="text-lg font-bold text-foreground">{brandName}</span>
             </Link>
-            <p className="mt-3 text-xs text-primary font-medium">
-              Digital Excellence in Marketing, Analytics, Innovation, Zeal & Engagement
-            </p>
-            <p className="mt-3 text-sm text-muted-foreground max-w-xs">
-              Transforming businesses through innovative digital solutions and strategic marketing.
-            </p>
-
-            {/* Social Links */}
+            <p className="mt-3 text-xs text-primary font-medium">{brandTagline}</p>
+            <p className="mt-3 text-sm text-muted-foreground max-w-xs">{brandDescription}</p>
             <div className="flex items-center gap-3 mt-6">
-              {socialLinks.map((social) => (
-                <a
-                  key={social.label}
-                  href={social.href}
-                  aria-label={social.label}
-                  className="w-9 h-9 rounded-full bg-secondary border border-border flex items-center justify-center hover:border-primary hover:bg-primary/10 transition-colors"
-                >
-                  <social.icon className="w-4 h-4 text-muted-foreground hover:text-primary" />
-                </a>
-              ))}
+              {socialLinks.map((social) => {
+                const Icon = socialIconMap[social.platform] ?? TwitterIcon
+                return (
+                  <a
+                    key={social.label}
+                    href={social.href}
+                    aria-label={social.label}
+                    className="w-9 h-9 rounded-full bg-secondary border border-border flex items-center justify-center hover:border-primary hover:bg-primary/10 transition-colors"
+                  >
+                    <Icon className="w-4 h-4 text-muted-foreground hover:text-primary" />
+                  </a>
+                )
+              })}
             </div>
           </div>
 
-          {/* Services */}
           <div>
             <h3 className="text-sm font-semibold text-foreground mb-4">Services</h3>
             <ul className="space-y-3">
               {footerLinks.services.map((link) => (
                 <li key={link.label}>
-                  <Link
-                    href={link.href}
-                    className="text-sm text-muted-foreground hover:text-foreground transition-colors"
-                  >
+                  <Link href={link.href} className="text-sm text-muted-foreground hover:text-foreground transition-colors">
                     {link.label}
                   </Link>
                 </li>
@@ -121,16 +98,12 @@ export function Footer() {
             </ul>
           </div>
 
-          {/* Company */}
           <div>
             <h3 className="text-sm font-semibold text-foreground mb-4">Company</h3>
             <ul className="space-y-3">
               {footerLinks.company.map((link) => (
                 <li key={link.label}>
-                  <Link
-                    href={link.href}
-                    className="text-sm text-muted-foreground hover:text-foreground transition-colors"
-                  >
+                  <Link href={link.href} className="text-sm text-muted-foreground hover:text-foreground transition-colors">
                     {link.label}
                   </Link>
                 </li>
@@ -138,16 +111,12 @@ export function Footer() {
             </ul>
           </div>
 
-          {/* Resources */}
           <div>
             <h3 className="text-sm font-semibold text-foreground mb-4">Resources</h3>
             <ul className="space-y-3">
               {footerLinks.resources.map((link) => (
                 <li key={link.label}>
-                  <Link
-                    href={link.href}
-                    className="text-sm text-muted-foreground hover:text-foreground transition-colors"
-                  >
+                  <Link href={link.href} className="text-sm text-muted-foreground hover:text-foreground transition-colors">
                     {link.label}
                   </Link>
                 </li>
@@ -156,14 +125,11 @@ export function Footer() {
           </div>
         </div>
 
-        {/* Bottom Bar */}
         <div className="mt-12 pt-8 border-t border-border flex flex-col sm:flex-row items-center justify-between gap-4">
           <p className="text-sm text-muted-foreground">
-            &copy; {new Date().getFullYear()} DE-MAIZE. All rights reserved.
+            &copy; {new Date().getFullYear()} {brandName}. All rights reserved.
           </p>
-          <p className="text-sm text-muted-foreground">
-            Digital Excellence in Marketing, Analytics, Innovation, Zeal & Engagement
-          </p>
+          <p className="text-sm text-muted-foreground">{brandTagline}</p>
         </div>
       </div>
     </footer>

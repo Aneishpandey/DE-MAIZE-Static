@@ -6,13 +6,20 @@ services:
     ports:
       - "3000:3000"
     restart: unless-stopped
+    environment:
+      - DATABASE_URL=postgresql://postgres:secret@db:5432/demaize?schema=public
+      - AUTH_SECRET=${AUTH_SECRET:-change-this-in-production}
+      - ADMIN_EMAIL=${ADMIN_EMAIL:-admin@demaize.com}
+      - ADMIN_PASSWORD=${ADMIN_PASSWORD:-admin123}
+    depends_on:
+      - db
 
   db:
     image: postgres:16-alpine
     environment:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=secret
-      - POSTGRES_DB=mydb
+      - POSTGRES_DB=demaize
     ports:
       - "5432:5432"
     volumes:
