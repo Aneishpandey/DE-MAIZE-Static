@@ -1,6 +1,6 @@
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
-import { ArrowRight, CheckCircle } from 'lucide-react'
+import { ArrowLeft, ArrowRight, CheckCircle } from 'lucide-react'
 import { services } from '@/lib/data'
 import { BackButton } from '@/components/ui/back-button'
 

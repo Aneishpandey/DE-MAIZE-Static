@@ -1,6 +1,6 @@
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
-import { ArrowRight, Calendar, Clock, User } from 'lucide-react'
+import { ArrowLeft, ArrowRight, Calendar, Clock, User } from 'lucide-react'
 import { blogPosts } from '@/lib/data'
 import { BackButton } from '@/components/ui/back-button'
 
