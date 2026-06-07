@@ -1,7 +1,8 @@
-cat > .dockerignore << 'EOF'
 node_modules
 .next
 .git
 .gitignore
 README.md
-EOF
+.env
+.env.local
+.env.production
