@@ -1,19 +1,19 @@
-import { unstable_cache } from 'next/cache'
-import { prisma } from '@/lib/db'
-import { CONTENT_CACHE_TAG } from '@/lib/revalidate'
-import type { HeroExtra, SiteContent } from '@/lib/types'
+import { unstable_cache } from "next/cache";
+import { prisma } from "@/lib/db";
+import { CONTENT_CACHE_TAG } from "@/lib/revalidate";
+import type { HeroExtra, SiteContent } from "@/lib/types";
 
 const cacheOptions = {
   tags: [CONTENT_CACHE_TAG],
   revalidate: 3600,
-} as const
+};
 
 function formatDate(date: Date) {
-  return date.toLocaleDateString('en-US', {
-    month: 'long',
-    day: 'numeric',
-    year: 'numeric',
-  })
+  return date.toLocaleDateString("en-US", {
+    month: "long",
+    day: "numeric",
+    year: "numeric",
+  });
 }
 
 function emptyContent(): SiteContent {
@@ -29,21 +29,21 @@ function emptyContent(): SiteContent {
     sections: {},
     services: [],
     projects: [],
-    projectCategories: ['All'],
+    projectCategories: ["All"],
     blogPosts: [],
     team: [],
     testimonials: [],
     stats: [],
     processSteps: [],
-  }
+  };
 }
 
 async function fetchSiteContent(): Promise<SiteContent> {
   try {
-    await prisma.$connect()
+    await prisma.$connect();
   } catch {
-    console.warn('Database unavailable — returning empty content for build')
-    return emptyContent()
+    console.warn("Database unavailable — returning empty content for build");
+    return emptyContent();
   }
 
   const [
@@ -60,22 +60,42 @@ async function fetchSiteContent(): Promise<SiteContent> {
     processSteps,
   ] = await Promise.all([
     prisma.siteSetting.findMany(),
-    prisma.navigationItem.findMany({ where: { isVisible: true }, orderBy: { sortOrder: 'asc' } }),
+    prisma.navigationItem.findMany({
+      where: { isVisible: true },
+      orderBy: { sortOrder: "asc" },
+    }),
     prisma.sectionContent.findMany(),
-    prisma.service.findMany({ where: { isPublished: true }, orderBy: { sortOrder: 'asc' } }),
-    prisma.project.findMany({ where: { isPublished: true }, orderBy: { sortOrder: 'asc' } }),
-    prisma.projectCategory.findMany({ orderBy: { sortOrder: 'asc' } }),
-    prisma.blogPost.findMany({ where: { isPublished: true }, orderBy: { publishedAt: 'desc' } }),
-    prisma.teamMember.findMany({ where: { isPublished: true }, orderBy: { sortOrder: 'asc' } }),
-    prisma.testimonial.findMany({ where: { isPublished: true }, orderBy: { sortOrder: 'asc' } }),
-    prisma.siteStat.findMany({ orderBy: { sortOrder: 'asc' } }),
-    prisma.processStep.findMany({ orderBy: { sortOrder: 'asc' } }),
-  ])
+    prisma.service.findMany({
+      where: { isPublished: true },
+      orderBy: { sortOrder: "asc" },
+    }),
+    prisma.project.findMany({
+      where: { isPublished: true },
+      orderBy: { sortOrder: "asc" },
+    }),
+    prisma.projectCategory.findMany({ orderBy: { sortOrder: "asc" } }),
+    prisma.blogPost.findMany({
+      where: { isPublished: true },
+      orderBy: { publishedAt: "desc" },
+    }),
+    prisma.teamMember.findMany({
+      where: { isPublished: true },
+      orderBy: { sortOrder: "asc" },
+    }),
+    prisma.testimonial.findMany({
+      where: { isPublished: true },
+      orderBy: { sortOrder: "asc" },
+    }),
+    prisma.siteStat.findMany({ orderBy: { sortOrder: "asc" } }),
+    prisma.processStep.findMany({ orderBy: { sortOrder: "asc" } }),
+  ]);
 
-  const settingsMap = Object.fromEntries(settings.map((s) => [s.key, s.value]))
+  const settingsMap = Object.fromEntries(settings.map((s) => [s.key, s.value]));
 
   const byLocation = (location: string) =>
-    navigation.filter((n) => n.location === location).map(({ label, href }) => ({ label, href }))
+    navigation
+      .filter((n) => n.location === location)
+      .map(({ label, href }) => ({ label, href }));
 
   const sectionsMap = Object.fromEntries(
     sections.map((s) => [
@@ -92,17 +112,17 @@ async function fetchSiteContent(): Promise<SiteContent> {
         extra: (s.extra as HeroExtra | null) ?? null,
       },
     ]),
-  )
+  );
 
   return {
     settings: settingsMap,
     navigation: {
-      header: byLocation('header'),
-      footerServices: byLocation('footer_services'),
-      footerCompany: byLocation('footer_company'),
-      footerResources: byLocation('footer_resources'),
+      header: byLocation("header"),
+      footerServices: byLocation("footer_services"),
+      footerCompany: byLocation("footer_company"),
+      footerResources: byLocation("footer_resources"),
       social: navigation
-        .filter((n) => n.location === 'social')
+        .filter((n) => n.location === "social")
         .map((n) => ({ label: n.label, href: n.href, platform: n.label })),
     },
     sections: sectionsMap,
@@ -130,7 +150,7 @@ async function fetchSiteContent(): Promise<SiteContent> {
       results: p.results,
       technologies: p.technologies,
     })),
-    projectCategories: ['All', ...categories.map((c) => c.name)],
+    projectCategories: ["All", ...categories.map((c) => c.name)],
     blogPosts: blogPosts.map((b) => ({
       id: b.id,
       slug: b.slug,
@@ -174,31 +194,35 @@ async function fetchSiteContent(): Promise<SiteContent> {
       description: p.description,
       icon: p.icon,
     })),
-  }
+  };
 }
 
-export const getSiteContent = unstable_cache(fetchSiteContent, ['site-content'], cacheOptions)
+export const getSiteContent = unstable_cache(
+  fetchSiteContent,
+  ["site-content"],
+  cacheOptions,
+);
 
 export async function getServiceBySlug(slug: string) {
-  const content = await getSiteContent()
-  return content.services.find((s) => s.slug === slug) ?? null
+  const content = await getSiteContent();
+  return content.services.find((s) => s.slug === slug) ?? null;
 }
 
 export async function getProjectBySlug(slug: string) {
-  const content = await getSiteContent()
-  return content.projects.find((p) => p.slug === slug) ?? null
+  const content = await getSiteContent();
+  return content.projects.find((p) => p.slug === slug) ?? null;
 }
 
 export async function getBlogPostBySlug(slug: string) {
-  const content = await getSiteContent()
-  return content.blogPosts.find((b) => b.slug === slug) ?? null
+  const content = await getSiteContent();
+  return content.blogPosts.find((b) => b.slug === slug) ?? null;
 }
 
 export async function getPublishedSlugs() {
-  const content = await getSiteContent()
+  const content = await getSiteContent();
   return {
     services: content.services.map((s) => s.slug),
     projects: content.projects.map((p) => p.slug),
     blogPosts: content.blogPosts.map((b) => b.slug),
-  }
+  };
 }
