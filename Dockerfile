@@ -10,7 +10,7 @@ RUN npm ci
 COPY . .
 
 # Dummy URL just for build time — real URL comes from docker-compose at runtime
-ENV DATABASE_URL="postgresql://postgres:secret@localhost:5432/demaize?schema=public"
+ENV DATABASE_URL=postgresql://postgres:secret@db:5432/demaize?schema=public
 ENV AUTH_SECRET="build-time-secret"
 ENV ADMIN_EMAIL="admin@demaize.com"
 ENV ADMIN_PASSWORD="admin123"
