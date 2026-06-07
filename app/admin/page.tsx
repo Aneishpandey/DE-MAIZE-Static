@@ -11,14 +11,21 @@ import {
 } from 'lucide-react'
 
 export default async function AdminDashboardPage() {
-  const [services, projects, blog, team, testimonials, messages] = await Promise.all([
-    prisma.service.count(),
-    prisma.project.count(),
-    prisma.blogPost.count(),
-    prisma.teamMember.count(),
-    prisma.testimonial.count(),
-    prisma.contactSubmission.count({ where: { status: 'new' } }),
-  ])
+  let services = 0, projects = 0, blog = 0, team = 0, testimonials = 0, messages = 0
+
+  try {
+    await prisma.$connect()
+    ;[services, projects, blog, team, testimonials, messages] = await Promise.all([
+      prisma.service.count(),
+      prisma.project.count(),
+      prisma.blogPost.count(),
+      prisma.teamMember.count(),
+      prisma.testimonial.count(),
+      prisma.contactSubmission.count({ where: { status: 'new' } }),
+    ])
+  } catch {
+    console.warn('Database unavailable — showing zero counts for build')
+  }
 
   const cards = [
     { label: 'Services', count: services, href: '/admin/services', icon: Briefcase },
